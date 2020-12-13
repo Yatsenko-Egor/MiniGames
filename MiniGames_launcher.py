@@ -1,6 +1,6 @@
 import pygame
 import pygame_gui
-from AssetManager import assetManager
+from Settings import start_settings
 
 
 class MiniGames_launcher():
@@ -46,10 +46,12 @@ class MiniGames_launcher():
         print('start_tetris')
 
     def start_settings_minesweeper(self):
-        print('start_settings_minesweeper')
+        start_settings(['Новичок', 'Любитель', 'Профессионал'], 'minesweeper')
+        self.screen = pygame.display.set_mode(self.size)
 
     def start_settings_tetris(self):
-        print('start_settings_tetris')
+        start_settings(['Легко', 'Средне', 'Сложно'], 'tetris')
+        self.screen = pygame.display.set_mode(self.size)
 
 
 if __name__ == '__main__':
