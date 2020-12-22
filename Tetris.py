@@ -1,253 +1,205 @@
+from Board_2 import Board
+from Piece import Piece
+from shapes import shapes
+import random
 import pygame
-import os
-from Board import Board
-from random import *
-
-WINDOW_SIZE = WINDOW_WIDTH, WINDOW_HEIGHT = 750, 750
-FPS = 60
-SPEED = 25
-BOARD_SIZE = (WINDOW_WIDTH // 5, WINDOW_HEIGHT // 5)
 
 
-class Tetris(pygame.sprite.Sprite):
-    def __init__(self, *group):
-        super().__init__(*group)
-        self.all_sprites = pygame.sprite.Group()
-        self.size = 50
-        self.x_pos = WINDOW_WIDTH // 2 - self.size // 2
-        self.y_pos = 0
-        self.total = 1
-        self.flag = True
-        self.map = []
-        self.b = []
-        self.figures = ['s', 'z', 'l', 't', 'j', 'o', 'i']
+class Tetris(Board):
+    def __init__(self, fps, screen):
+        screen = screen
+        width = 10
+        height = 20
+        self.total = -10
+        super().__init__(width, height, left=0, top=0, cell_size=45)
+        self.colors = ['red', 'blue', 'yellow', 'orange', 'pink', 'purple', 'cyan']
+        self.count = 0
+        self.fps = fps
+        self.difficulty = 30
+        self.border_color = pygame.Color('black')
+        self.ACTIVE_PIECE = 1
+        self.BLOCK = 11
+        self.bor = Board(width, height, left=0, top=0, cell_size=45)
+        self.BLOCK_COLOR = pygame.Color('darkred')
+        self.create_active_piece()
+        self.render_active_piece(screen)
 
-    def render(self, screen):
-        if self.flag == True:
-            self.what_figure = self.get_figure()
-            self.flag = False
-        if self.what_figure == 's':
-            self.draw_s(screen)
-        elif self.what_figure == 'z':
-            self.draw_z(screen)
-        elif self.what_figure == 'l':
-            self.draw_l(screen)
-        elif self.what_figure == 't':
-            self.draw_t(screen)
-        elif self.what_figure == 'j':
-            self.draw_j(screen)
-        elif self.what_figure == 'o':
-            self.draw_o(screen)
-        elif self.what_figure == 'i':
-            self.draw_i(screen)
-
-    def new_coords(self):
-        self.x_pos = WINDOW_WIDTH // 2 - self.size // 2
-        self.y_pos = 0
-        self.flag = True
-
-    def load_image(self, name, colorkey=None):
-        fullname = os.path.join('data', name)
-        image = pygame.image.load(fullname)
-        if colorkey is not None:
-            image = image.convert()
-            if colorkey == -1:
-                colorkey = image.get_at((0, 0))
-            image.set_colorkey(colorkey)
+    def render_cell(self, i, j, screen):
+        x, y = self.get_cell_position(i, j)
+        rect = pygame.Rect(x, y, self.cell_size, self.cell_size)
+        val = self.board[i][j]
+        if val == self.ACTIVE_PIECE:
+            pygame.draw.rect(screen, self.ACTIVE_PIECE_COLOR, rect)
+        elif val == self.BLOCK:
+            pygame.draw.rect(screen, self.BLOCK_COLOR, rect)
         else:
-            image = image.convert_alpha()
-        return image
+            pygame.draw.rect(screen, self.border_color, rect, width=self.border_width)
 
-    def get_figure(self):
-        self.a = choice(self.figures)
-        return self.a
+    def update(self, screen):
+        self.count += 1
+        if self.count % (self.fps - self.difficulty) == 0:
+            self.update_world(screen)
 
-    def get_size(self):
-        return self.size
+    def is_free(self):
+        self.res = True
+        for row in range(1):
+            if self.BLOCK in self.board[row]:
+                self.res = False
+        return self.res
 
-    def get_position(self):
-        return self.x_pos, self.y_pos
-
-    def set_position(self, position):
-        self.x_pos, self.y_pos = position
-        
-    def is_free_left(self, x):
-        if x >= SPEED:
-            return True
-
-    def is_free_right(self, x):
-        if x <= WINDOW_WIDTH - self.size - SPEED:
-            return True
-
-    def is_free_down(self, y):
-        if y <= WINDOW_HEIGHT - self.size - 7:
-            return True
-
-    def is_free_down_low(self, y):
-        if y <= WINDOW_HEIGHT - self.size - 2:
-            return True
-
-    def draw_s(self, screen):
-        self.s_types = {
-            1: 's_1.xcf',
-            2: 's_2.xcf',
-            3: 's_3.xcf',
-            4: 's_4.xcf'
-        }
-        filename = self.s_types[self.total]
-        s = pygame.sprite.Sprite()
-        s.image = self.load_image(filename)
-        s.rect = s.image.get_rect()
-        self.all_sprites.add(s)
-        self.load_image(filename)
-        s.rect.x = self.x_pos
-        s.rect.y = self.y_pos
-
-    def draw_z(self, screen):
-        self.z_types = {
-            1: 'z_1.xcf',
-            2: 'z_2.xcf',
-            3: 'z_3.xcf',
-            4: 'z_4.xcf'
-        }
-        filename = self.z_types[self.total]
-        z = pygame.sprite.Sprite()
-        z.image = self.load_image(filename)
-        z.rect = z.image.get_rect()
-        self.all_sprites.add(z)
-        self.load_image(filename)
-        z.rect.x = self.x_pos
-        z.rect.y = self.y_pos
-
-    def draw_j(self, screen):
-        self.j_types = {
-            1: 'j_1.xcf',
-            2: 'j_2.xcf',
-            3: 'j_3.xcf',
-            4: 'j_4.xcf'
-        }
-        filename = self.j_types[self.total]
-        j = pygame.sprite.Sprite()
-        j.image = self.load_image(filename)
-        j.rect = j.image.get_rect()
-        self.all_sprites.add(j)
-        self.load_image(filename)
-        j.rect.x = self.x_pos
-        j.rect.y = self.y_pos
-
-    def draw_t(self, screen):
-        self.t_types = {
-            1: 't_1.xcf',
-            2: 't_2.xcf',
-            3: 't_3.xcf',
-            4: 't_4.xcf'
-        }
-        filename = self.t_types[self.total]
-        t = pygame.sprite.Sprite()
-        t.image = self.load_image(filename)
-        t.rect = t.image.get_rect()
-        self.all_sprites.add(t)
-        self.load_image(filename)
-        t.rect.x = self.x_pos
-        t.rect.y = self.y_pos
-
-    def draw_l(self, screen):
-        self.l_types = {
-            1: 'l_1.xcf',
-            2: 'l_2.xcf',
-            3: 'l_3.xcf',
-            4: 'l_4.xcf'
-        }
-        filename = self.l_types[self.total]
-        l = pygame.sprite.Sprite()
-        l.image = self.load_image(filename)
-        l.rect = l.image.get_rect()
-        self.all_sprites.add(l)
-        self.load_image(filename)
-        l.rect.x = self.x_pos
-        l.rect.y = self.y_pos
-
-    def draw_o(self, screen):
-        filename = 'o.xcf'
-        self.all_sprites = pygame.sprite.Group()
-        o = pygame.sprite.Sprite()
-        o.image = self.load_image(filename)
-        o.rect = o.image.get_rect()
-        self.all_sprites.add(o)
-        self.load_image(filename)
-        o.rect.x = self.x_pos
-        o.rect.y = self.y_pos
-
-    def draw_i(self, screen):
-        self.i_types = {
-            1: 'i_1.xcf',
-            2: 'i_2.xcf',
-        }
-        filename = self.i_types[self.total]
-        i = pygame.sprite.Sprite()
-        i.image = self.load_image(filename)
-        i.rect = i.image.get_rect()
-        self.all_sprites.add(i)
-        self.load_image(filename)
-        i.rect.x = self.x_pos
-        i.rect.y = self.y_pos
-
-    def get_all_sprites(self):
-        return self.all_sprites
-
-
-class Move:
-    def __init__(self, tetris):
-        self.tetris = tetris
-
-    def render(self, screen):
-        self.tetris.render(screen)
-
-    def update_figure(self):
-        self.next_x, self.next_y = self.tetris.get_position()
-        if pygame.key.get_pressed()[pygame.K_LEFT]:
-            if self.tetris.is_free_left(self.next_x):
-                    self.next_x -= SPEED
-        if pygame.key.get_pressed()[pygame.K_RIGHT]:
-            if self.tetris.is_free_right(self.next_x):
-                self.next_x += SPEED
-        if pygame.key.get_pressed()[pygame.K_DOWN]:
-            if self.tetris.is_free_down(self.next_y):
-                self.next_y += 10
-            else:
-                self.next_y += WINDOW_WIDTH - self.tetris.get_size() - self.next_y
-        if self.tetris.is_free_down_low(self.next_y):
-            self.next_y += 4
+    def update_world(self, screen):
+        if self.can_move(pygame.K_DOWN):
+            self.remove_active_piece()
+            self.active_piece.down()
+            self.render_active_piece(screen)
         else:
-            self.next_y += WINDOW_WIDTH - self.tetris.get_size() - self.next_y
-        self.tetris.set_position((self.next_x, self.next_y))
-        if self.next_y == WINDOW_WIDTH - self.tetris.get_size():
-            self.tetris.new_coords()
+            self.active_piece_to_block()
+            self.check_complete_lines()
+            self.create_active_piece()
+            self.render_active_piece(screen)
 
+    def active_piece_to_block(self):
+        shape = self.active_piece.get_shape()
+        for i in range(self.active_piece.size):
+            for j in range(self.active_piece.size):
+                board_row = i + self.active_piece.row
+                board_column = j + self.active_piece.column
+                if self.is_valid_pos(board_row, board_column):
+                    shape_val = int(shape[i][j])
+                    if shape_val == self.ACTIVE_PIECE:
+                        self.board[board_row][board_column] = self.BLOCK
 
-def main():
-    pygame.init()
-    screen = pygame.display.set_mode(WINDOW_SIZE)
-    clock = pygame.time.Clock()
-    tetris = Tetris()
-    all_sprites = tetris.get_all_sprites()
-    board = Board(BOARD_SIZE[0], BOARD_SIZE[1])
-    move = Move(tetris)
-    running = True
-    while running:
-        move.update_figure()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-        screen.fill(pygame.Color('gray'))
-        board.render(screen)
-        move.render(screen)
-        all_sprites.draw(screen)
-        move.update_figure()
-        pygame.display.flip()
-        clock.tick(FPS)
-    pygame.quit()
+    def check_complete_lines(self):
+        for row in range(self.height):
+            if self.board[row].count(self.BLOCK) == self.width:
+                self.delete_line(row)
 
+    def delete_line(self, index):
+        for i in range(index, 0, -1):
+            self.board[i] = self.board[i - 1]
+        self.board[0] = [0] * self.width
+        self.total += 50
 
-if __name__ == "__main__":
-    main()
+    def render_active_piece(self, screen):
+        shape = self.active_piece.get_shape()
+        for i in range(self.active_piece.size):
+            for j in range(self.active_piece.size):
+                board_row = i + self.active_piece.row
+                board_column = j + self.active_piece.column
+                if self.is_valid_pos(board_row, board_column):
+                    shape_val = int(shape[i][j])
+                    if shape_val == self.ACTIVE_PIECE:
+                        self.board[board_row][board_column] = self.ACTIVE_PIECE
+
+    def remove_active_piece(self):
+        shape = self.active_piece.get_shape()
+        for i in range(self.active_piece.size):
+            for j in range(self.active_piece.size):
+                board_row = i + self.active_piece.row
+                board_column = j + self.active_piece.column
+                if self.is_valid_pos(board_row, board_column):
+                    shape_val = int(shape[i][j])
+                    if shape_val == self.ACTIVE_PIECE:
+                        self.board[board_row][board_column] = self.default_value
+
+    def is_valid_pos(self, row, col):
+        return 0 <= row < self.height and 0 <= col < self.width
+
+    def get_random_shape(self):
+        self.ACTIVE_PIECE_COLOR = pygame.Color(random.choice(self.colors))
+        self.total += 10
+        return random.choice(list(shapes.values()))
+
+    def create_active_piece(self):
+        self.active_piece = Piece(self.get_random_shape(), -1, 3)
+
+    def can_move(self, direction):
+        actions = {pygame.K_DOWN: self.active_piece.down, pygame.K_LEFT: self.active_piece.left,
+                   pygame.K_RIGHT: self.active_piece.right, pygame.K_UP: self.active_piece.rotate}
+        reverse_actions = {pygame.K_DOWN: self.active_piece.up, pygame.K_LEFT: self.active_piece.right,
+                           pygame.K_RIGHT: self.active_piece.left, pygame.K_UP: self.active_piece.rotate_prev}
+        result = True
+        actions[direction]()
+        shape = self.active_piece.get_shape()
+        for i in range(self.active_piece.size):
+            for j in range(self.active_piece.size):
+                board_row = i + self.active_piece.row
+                board_column = j + self.active_piece.column
+                shape_val = int(shape[i][j])
+                if not self.is_valid_pos(board_row, board_column) and shape_val == self.ACTIVE_PIECE:
+                    result = False
+                    break
+                if not self.is_valid_pos(board_row, board_column):
+                    continue
+                board_val = self.board[board_row][board_column]
+                if shape_val == self.ACTIVE_PIECE and board_val == self.BLOCK:
+                    result = False
+                    break
+        reverse_actions[direction]()
+        return result
+
+    def move_action(self, action, direction, screen):
+        if self.can_move(direction):
+            self.remove_active_piece()
+            action()
+            self.render_active_piece(screen)
+
+    def on_key_pressed(self, key, screen):
+        actions = {pygame.K_DOWN: self.active_piece.down, pygame.K_LEFT: self.active_piece.left,
+                   pygame.K_RIGHT: self.active_piece.right, pygame.K_UP: self.active_piece.rotate}
+        if key in actions:
+            self.move_action(actions[key], key, screen)
+
+    def draw_buttons(self, screen):
+        font = pygame.font.Font(None, 50)
+        text = font.render(f"total: {self.total}", True, (0, 0, 0))
+        screen.blit(text, (525, 50))
+
+        font = pygame.font.Font(None, 50)
+        text = font.render("Выберите", True, (0, 0, 0))
+        screen.blit(text, (515, 250))
+
+        font = pygame.font.Font(None, 50)
+        text = font.render("скорость игры:", True, (0, 0, 0))
+        screen.blit(text, (475, 325))
+
+        font = pygame.font.Font(None, 50)
+        text = font.render("Х1", True, (0, 0, 0))
+        screen.blit(text, (475, 400))
+
+        font = pygame.font.Font(None, 50)
+        text = font.render("Х2", True, (0, 0, 0))
+        screen.blit(text, (575, 400))
+
+        font = pygame.font.Font(None, 50)
+        text = font.render("Х3", True, (0, 0, 0))
+        screen.blit(text, (675, 400))
+
+        pygame.draw.rect(screen, (0, 0, 0), (470, 395,
+                                             50, 50), 1)
+        pygame.draw.rect(screen, (0, 0, 0), (570, 395,
+                                             50, 50), 1)
+        pygame.draw.rect(screen, (0, 0, 0), (670, 395,
+                                             50, 50), 1)
+
+    def is_click_button_1(self):
+        self.difficulty = 30
+
+    def is_click_button_2(self):
+        self.difficulty = 40
+
+    def is_click_button_3(self):
+        self.difficulty = 50
+
+    def get_click(self, pos):
+        x = pos[0]
+        y = pos[1]
+        if x >= 470 and x <= 520:
+            if y >= 395 and y <= 445:
+                self.is_click_button_1()
+        if x >= 570 and x <= 620:
+            if y >= 395 and y <= 445:
+                self.is_click_button_2()
+        if x >= 670 and x <= 720:
+            if y >= 395 and y <= 445:
+                self.is_click_button_3()
