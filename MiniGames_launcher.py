@@ -1,7 +1,8 @@
 import pygame
 import pygame_gui
 from Settings import start_settings
-
+from Minesweeper import Minesweeper
+import sqlite3
 
 class MiniGames_launcher():
     def __init__(self):
@@ -40,7 +41,15 @@ class MiniGames_launcher():
             manager=self.manager)
 
     def start_minesweeper(self):
-        print('start_minesweeper')
+        complexity_minesweeper = {'Новичок': (10, (8, 8)), 'Любитель': (40, (16, 16)), 'Профессионал': (99, (16, 30))}
+        database = sqlite3.connect('data\database.sql')
+        cursor = database.cursor()
+        complexity = cursor.execute('''SELECT complexity from complexity_of_game 
+           WHERE name_game=?''', ('minesweeper',)).fetchone()[0]
+        mines_count, count_cells = complexity_minesweeper[complexity]
+        self.minesweeper = Minesweeper(mines_count, count_cells)
+        self.minesweeper.start()
+        self.screen = pygame.display.set_mode(self.size)
 
     def start_tetris(self):
         print('start_tetris')
@@ -52,7 +61,6 @@ class MiniGames_launcher():
     def start_settings_tetris(self):
         start_settings(['Легко', 'Средне', 'Сложно'], 'tetris')
         self.screen = pygame.display.set_mode(self.size)
-
 
 if __name__ == '__main__':
     window = MiniGames_launcher()
