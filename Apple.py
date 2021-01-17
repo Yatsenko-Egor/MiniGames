@@ -1,5 +1,5 @@
 import pygame
-from AssetManager import  assetManager
+from AssetManager import assetManager
 from random import randrange
 
 
