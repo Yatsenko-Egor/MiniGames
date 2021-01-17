@@ -7,7 +7,7 @@ class Settings():
     def __init__(self, options_to_choose, name_game):
         self.name_game = name_game
         self.options_to_choose = options_to_choose
-        self.database = sqlite3.connect('data\database.sql')
+        self.database = sqlite3.connect('data/database.sql')
         self.cursor = self.database.cursor()
         self.current_choice = self.cursor.execute('''SELECT complexity from complexity_of_game
                                                       WHERE name_game=?''', (self.name_game,)).fetchone()[0]
