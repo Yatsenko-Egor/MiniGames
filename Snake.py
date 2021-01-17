@@ -230,4 +230,3 @@ class Snake():
             self.clock.tick(self.fps)
             pygame.display.flip()
         pygame.quit()
-
