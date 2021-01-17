@@ -1,6 +1,7 @@
 import pygame
 from AssetManager import assetManager
 
+
 class GrassSprite(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()

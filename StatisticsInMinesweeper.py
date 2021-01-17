@@ -13,7 +13,7 @@ class StatisticsInMinesweeper():
         self.screen.fill(pygame.Color((180, 180, 180)))
         self.indent_in_left_column = self.width / 4
         self.indent_in_right_column = self.width / 2 + self.width / 4
-        self.complexity = ['Профессионал', 'Любитель',  'Новичок']
+        self.complexity = ['Профессионал', 'Любитель', 'Новичок']
         self.font = pygame.font.SysFont('Calibri', 18)
         self.start()
 

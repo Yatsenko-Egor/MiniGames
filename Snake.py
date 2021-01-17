@@ -191,7 +191,6 @@ class Snake():
         text_x = self.width / 2 - text.get_width() / 2
         self.screen.blit(text, (text_x, y))
 
-
     def restart(self):
         self.length_body = 2
         self.snake_body = [[300, 200], [300, 225]]
