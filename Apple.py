@@ -6,7 +6,7 @@ from random import randrange
 class AppleSprite(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = assetManager.load_image('apple.png', (255, 255, 255))
+        self.image = assetManager.load_image('Snake/apple.png', (255, 255, 255))
         self.rect = self.image.get_rect()
         self.change_coordinates()
 

@@ -5,7 +5,7 @@ from AssetManager import assetManager
 class GrassSprite(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = assetManager.load_image('grass.png')
+        self.image = assetManager.load_image('Snake/grass.png')
         self.rect = self.image.get_rect()
 
 
