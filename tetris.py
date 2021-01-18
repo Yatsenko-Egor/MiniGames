@@ -9,7 +9,7 @@ TILE = 45
 GAME_RES = WIDTH * TILE, HEIGHT * TILE
 
 
-class Tetris():
+class Tetris:
     def __init__(self, speed):
         pygame.init()
         self.screen = pygame.display.set_mode(RES)

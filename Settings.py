@@ -3,7 +3,7 @@ import pygame_gui
 import sqlite3
 
 
-class Settings():
+class Settings:
     def __init__(self, options_to_choose, name_game):
         self.name_game = name_game
         self.options_to_choose = options_to_choose

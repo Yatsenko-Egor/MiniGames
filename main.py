@@ -7,7 +7,7 @@ from tetris import Tetris
 from Snake import Snake
 
 
-class MiniGames_launcher():
+class MiniGamesLauncher:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('MiniGames_launcher')
@@ -88,7 +88,7 @@ class MiniGames_launcher():
 
 
 if __name__ == '__main__':
-    window = MiniGames_launcher()
+    window = MiniGamesLauncher()
     fps = 50
     clock = pygame.time.Clock()
     running = True

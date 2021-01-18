@@ -2,7 +2,7 @@ import pygame
 import sqlite3
 
 
-class StatisticsInMinesweeper():
+class StatisticsInMinesweeper:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('Статистика')

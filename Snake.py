@@ -4,7 +4,7 @@ from Field import Field
 import sqlite3
 
 
-class Snake():
+class Snake:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('Змейка')

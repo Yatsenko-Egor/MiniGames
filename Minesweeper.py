@@ -7,7 +7,7 @@ from StatisticsInMinesweeper import StatisticsInMinesweeper
 import sqlite3
 
 
-class Minesweeper():
+class Minesweeper:
     def __init__(self, mines_count, count_cells, complexity):
         self.CELL_SIZE = 30
         self.complexity = complexity
