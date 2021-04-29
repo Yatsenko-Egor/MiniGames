@@ -52,10 +52,10 @@ class Tetris:
 
     def what_record(self):
         try:
-            with open('record') as f:
+            with open('data/Tetris/record') as f:
                 return f.readline()
         except FileNotFoundError:
-            with open('record', 'w') as f:
+            with open('data/Tetris/record', 'w') as f:
                 f.write('0')
 
     def give_record(self, record, score):
